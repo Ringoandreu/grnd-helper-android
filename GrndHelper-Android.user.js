@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Автоответчик жалоб (Android)
 // @namespace    Grnd Helper for Android By Ringo
-// @version      3.2
+// @version      3.3
 // @description  Автоматизация ответов на жалобы и генерации команд (мут, бан, варн и т. д.)
 // @author       Ringo
 // @match        https://grnd.gg/admin/complaints
@@ -409,7 +409,7 @@
             .then(response => response.text())
             .then(scriptContent => {
                 const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-                if (latestVersionMatch && latestVersionMatch[1] !== "3.2") { // Замените "3.2" на текущую версию
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.3") { // Замените "3.3" на текущую версию
                     // Если версия на сервере новее
                     updateIcon.style.color = "#ff6b6b"; // Красный цвет
                     updateIcon.title = "Доступно обновление! Нажмите для подробностей.";
@@ -424,97 +424,109 @@
             });
     }
 
-    function showUpdateModal(updateIcon) {
-        fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js")
-            .then(response => response.text())
-            .then(scriptContent => {
-                const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-                if (latestVersionMatch && latestVersionMatch[1] !== "3.2") { // Замените "3.2" на текущую версию
-                    // Если есть обновление
-                    fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/CHANGELOG.md")
-                        .then(response => response.text())
-                        .then(changelog => {
-                            // Создаём модальное окно
-                            const modal = document.createElement("div");
-                            modal.style.position = "fixed";
-                            modal.style.top = "50%";
-                            modal.style.left = "50%";
-                            modal.style.transform = "translate(-50%, -50%)";
-                            modal.style.background = "#333";
-                            modal.style.padding = "20px";
-                            modal.style.borderRadius = "10px";
-                            modal.style.color = "#fff";
-                            modal.style.zIndex = "1000";
-                            modal.style.width = "400px";
-                            modal.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+function showUpdateModal(updateIcon) {
+    fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js")
+        .then(response => response.text())
+        .then(scriptContent => {
+            const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
+            const currentVersion = "3.1"; // Замените на текущую версию
 
-                            // Заголовок модального окна
-                            const modalHeader = document.createElement("h3");
-                            modalHeader.innerText = "Доступно обновление!";
-                            modalHeader.style.marginBottom = "10px";
+            // Создаём модальное окно
+            const modal = document.createElement("div");
+            modal.style.position = "fixed";
+            modal.style.top = "50%";
+            modal.style.left = "50%";
+            modal.style.transform = "translate(-50%, -50%)";
+            modal.style.background = "#333";
+            modal.style.padding = "20px";
+            modal.style.borderRadius = "10px";
+            modal.style.color = "#fff";
+            modal.style.zIndex = "1000";
+            modal.style.width = "400px";
+            modal.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
 
-                            // Текст с changelog
-                            const modalContent = document.createElement("div");
-                            modalContent.innerHTML = `
-                                <p><strong>Новая версия:</strong> ${latestVersionMatch[1]}</p>
-                                <p><strong>Список изменений:</strong></p>
-                                <pre>${changelog}</pre>
-                                <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
-                                    Если у Вас возникли проблемы со скриптом, обратитесь к <strong>Ringo</strong>.
-                                </p>
-                            `;
-                            modalContent.style.marginBottom = "20px";
+            // Заголовок модального окна
+            const modalHeader = document.createElement("h3");
+            modalHeader.innerText = latestVersionMatch && latestVersionMatch[1] !== currentVersion
+                ? "Доступно обновление!"
+                : "Информация о версии";
+            modalHeader.style.marginBottom = "10px";
 
-                            // Кнопка "Обновиться"
-                            const updateButton = document.createElement("button");
-                            updateButton.innerText = "Обновиться";
-                            updateButton.style.background = "#28a745";
-                            updateButton.style.color = "#fff";
-                            updateButton.style.border = "none";
-                            updateButton.style.padding = "8px 16px";
-                            updateButton.style.borderRadius = "5px";
-                            updateButton.style.cursor = "pointer";
-                            updateButton.style.marginRight = "10px";
-                            updateButton.addEventListener("click", () => {
-                                window.location.href = "https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js";
-                            });
+            // Текст с информацией
+            const modalContent = document.createElement("div");
+            if (latestVersionMatch && latestVersionMatch[1] !== currentVersion) {
+                // Если есть обновление
+                fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/CHANGELOG.md")
+                    .then(response => response.text())
+                    .then(changelog => {
+                        modalContent.innerHTML = `
+                            <p><strong>Новая версия:</strong> ${latestVersionMatch[1]}</p>
+                            <p><strong>Список изменений:</strong></p>
+                            <pre>${changelog}</pre>
+                            <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
+                                Если у Вас возникли проблемы со скриптом, обратитесь к <strong>Ringo</strong>.
+                            </p>
+                        `;
+                    })
+                    .catch(error => {
+                        console.error("Ошибка при загрузке списка изменений:", error);
+                        modalContent.innerHTML = `<p>Не удалось загрузить список изменений.</p>`;
+                    });
+            } else {
+                // Если обновлений нет
+                modalContent.innerHTML = `
+                    <p><strong>Текущая версия:</strong> ${currentVersion}</p>
+                    <p>У вас самая новая и стабильная версия, обновлений пока нет.</p>
+                    <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
+                        Если у Вас возникли проблемы со скриптом, обратитесь к <strong>Ringo</strong>.
+                    </p>
+                `;
+            }
 
-                            // Кнопка "Закрыть"
-                            const closeButton = document.createElement("button");
-                            closeButton.innerText = "Закрыть";
-                            closeButton.style.background = "#dc3545";
-                            closeButton.style.color = "#fff";
-                            closeButton.style.border = "none";
-                            closeButton.style.padding = "8px 16px";
-                            closeButton.style.borderRadius = "5px";
-                            closeButton.style.cursor = "pointer";
-                            closeButton.addEventListener("click", () => {
-                                document.body.removeChild(modal);
-                            });
+            modalContent.style.marginBottom = "20px";
 
-                            // Добавляем элементы в модальное окно
-                            modal.appendChild(modalHeader);
-                            modal.appendChild(modalContent);
-                            modal.appendChild(updateButton);
-                            modal.appendChild(closeButton);
+            // Кнопка "Обновиться" (только если есть обновление)
+            const updateButton = latestVersionMatch && latestVersionMatch[1] !== currentVersion
+                ? (() => {
+                    const button = document.createElement("button");
+                    button.innerText = "Обновиться";
+                    button.style.background = "#28a745";
+                    button.style.color = "#fff";
+                    button.style.border = "none";
+                    button.style.padding = "8px 16px";
+                    button.style.borderRadius = "5px";
+                    button.style.cursor = "pointer";
+                    button.style.marginRight = "10px";
+                    button.addEventListener("click", () => {
+                        window.location.href = "https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js";
+                    });
+                    return button;
+                })()
+                : null;
 
-                            // Добавляем модальное окно на страницу
-                            document.body.appendChild(modal);
-                        })
-                        .catch(error => {
-                            console.error("Ошибка при загрузке списка изменений:", error);
-                        });
-                } else {
-                    // Если обновлений нет
-                    alert("У вас самая новая и стабильная версия, обновлений пока нет.");
-                }
-            })
-            .catch(error => {
-                console.error("Ошибка при проверке обновлений:", error);
+            // Кнопка "Закрыть"
+            const closeButton = document.createElement("button");
+            closeButton.innerText = "Закрыть";
+            closeButton.style.background = "#dc3545";
+            closeButton.style.color = "#fff";
+            closeButton.style.border = "none";
+            closeButton.style.padding = "8px 16px";
+            closeButton.style.borderRadius = "5px";
+            closeButton.style.cursor = "pointer";
+            closeButton.addEventListener("click", () => {
+                document.body.removeChild(modal);
             });
-    }
 
-    setTimeout(() => {
-        addPunishmentForm();
-    }, 1500);
-})();
+            // Добавляем элементы в модальное окно
+            modal.appendChild(modalHeader);
+            modal.appendChild(modalContent);
+            if (updateButton) modal.appendChild(updateButton);
+            modal.appendChild(closeButton);
+
+            // Добавляем модальное окно на страницу
+            document.body.appendChild(modal);
+        })
+        .catch(error => {
+            console.error("Ошибка при проверке обновлений:", error);
+        });
+}
