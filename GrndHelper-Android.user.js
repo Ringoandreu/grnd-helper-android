@@ -429,24 +429,24 @@ function showUpdateModal(updateIcon) {
         .then(response => response.text())
         .then(scriptContent => {
             const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-            const currentVersion = "3.4"; // Замените на текущую версию
+            const currentVersion = "3.3"; // Замените на текущую версию
 
-            // Находим контейнер генератора наказаний
-            const punishmentForm = document.querySelector(".punishment-form");
-            if (!punishmentForm) {
-                alert("Генератор наказаний не найден на странице.");
-                return;
-            }
-
-            // Получаем координаты генератора наказаний
-            const rect = punishmentForm.getBoundingClientRect();
+            // Создаем overlay (полупрозрачный фон)
+            const overlay = document.createElement("div");
+            overlay.style.position = "fixed";
+            overlay.style.top = "0";
+            overlay.style.left = "0";
+            overlay.style.width = "100%";
+            overlay.style.height = "100%";
+            overlay.style.background = "rgba(0, 0, 0, 0.5)"; // Полупрозрачный черный фон
+            overlay.style.zIndex = "9999"; // Ниже модального окна
 
             // Создаём модальное окно
             const modal = document.createElement("div");
-            modal.style.position = "fixed"; // Фиксированное позиционирование
-            modal.style.top = `${rect.top + window.scrollY}px`; // Позиционируем окно относительно генератора
-            modal.style.left = `${rect.left + window.scrollX}px`; // Позиционируем окно относительно генератора
-            modal.style.transform = "translateY(20px)"; // Сдвигаем окно немного вниз
+            modal.style.position = "fixed";
+            modal.style.top = "50%"; // Центрируем по вертикали
+            modal.style.left = "50%"; // Центрируем по горизонтали
+            modal.style.transform = "translate(-50%, -50%)"; // Точное центрирование
             modal.style.background = "#333";
             modal.style.padding = "20px";
             modal.style.borderRadius = "10px";
@@ -550,6 +550,8 @@ function showUpdateModal(updateIcon) {
                     button.style.marginRight = "10px";
                     button.addEventListener("click", () => {
                         window.location.href = "https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js";
+                        document.body.removeChild(overlay); // Удаляем overlay
+                        document.body.removeChild(modal); // Удаляем модальное окно
                     });
                     return button;
                 })()
@@ -565,7 +567,8 @@ function showUpdateModal(updateIcon) {
             closeButton.style.borderRadius = "5px";
             closeButton.style.cursor = "pointer";
             closeButton.addEventListener("click", () => {
-                document.body.removeChild(modal);
+                document.body.removeChild(overlay); // Удаляем overlay
+                document.body.removeChild(modal); // Удаляем модальное окно
             });
 
             // Контейнер для кнопок
@@ -583,7 +586,8 @@ function showUpdateModal(updateIcon) {
             modal.appendChild(ringoNote);
             modal.appendChild(buttonContainer);
 
-            // Добавляем модальное окно на страницу
+            // Добавляем overlay и модальное окно на страницу
+            document.body.appendChild(overlay);
             document.body.appendChild(modal);
         })
         .catch(error => {
