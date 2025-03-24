@@ -429,7 +429,7 @@ function showUpdateModal(updateIcon) {
         .then(response => response.text())
         .then(scriptContent => {
             const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-            const currentVersion = "3.1"; // Замените на текущую версию
+            const currentVersion = "3.2"; // Замените на текущую версию
 
             // Если версия на сервере совпадает с текущей, выходим
             if (latestVersionMatch && latestVersionMatch[1] === currentVersion) {
