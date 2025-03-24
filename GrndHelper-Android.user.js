@@ -433,10 +433,10 @@ function showUpdateModal(updateIcon) {
 
             // Создаём модальное окно
             const modal = document.createElement("div");
-            modal.style.position = "absolute"; // Плавающее окно
-            modal.style.top = `${window.scrollY + 50}px`; // Позиционируем окно относительно текущей прокрутки
-            modal.style.left = "50%";
-            modal.style.transform = "translateX(-50%)"; // Центрируем по горизонтали
+            modal.style.position = "fixed"; // Фиксированное позиционирование
+            modal.style.top = "50%"; // Центрируем по вертикали
+            modal.style.left = "50%"; // Центрируем по горизонтали
+            modal.style.transform = "translate(-50%, -50%)"; // Точное центрирование
             modal.style.background = "#333";
             modal.style.padding = "20px";
             modal.style.borderRadius = "10px";
@@ -576,10 +576,32 @@ function showUpdateModal(updateIcon) {
             // Добавляем модальное окно на страницу
             document.body.appendChild(modal);
 
-            // Обновляем позицию окна при прокрутке
-            window.addEventListener("scroll", () => {
-                modal.style.top = `${window.scrollY + 50}px`;
+            // Обработка прокрутки страницы
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            // Функция для перемещения окна
+            const moveModal = (e) => {
+                if (isDragging) {
+                    modal.style.left = `${e.clientX - offsetX}px`;
+                    modal.style.top = `${e.clientY - offsetY}px`;
+                }
+            };
+
+            // Обработчик начала перемещения
+            modalHeader.addEventListener("mousedown", (e) => {
+                isDragging = true;
+                offsetX = e.clientX - modal.offsetLeft;
+                offsetY = e.clientY - modal.offsetTop;
             });
+
+            // Обработчик окончания перемещения
+            document.addEventListener("mouseup", () => {
+                isDragging = false;
+            });
+
+            // Обработчик перемещения мыши
+            document.addEventListener("mousemove", moveModal);
         })
         .catch(error => {
             console.error("Ошибка при проверке обновлений:", error);
