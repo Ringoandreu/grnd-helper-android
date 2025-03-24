@@ -548,3 +548,8 @@ function showUpdateModal(updateIcon) {
             console.error("Ошибка при проверке обновлений:", error);
         });
 }
+
+    setTimeout(() => {
+        addPunishmentForm();
+    }, 1500);
+})();
