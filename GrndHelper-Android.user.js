@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Автоответчик жалоб (Android)
 // @namespace    Grnd Helper for Android By Ringo
-// @version      3.3
+// @version      3.2
 // @description  Автоматизация ответов на жалобы и генерации команд (мут, бан, варн и т. д.)
 // @author       Ringo
 // @match        https://grnd.gg/admin/complaints
@@ -409,7 +409,7 @@
             .then(response => response.text())
             .then(scriptContent => {
                 const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-                if (latestVersionMatch && latestVersionMatch[1] !== "3.3") { // Замените "3.3" на текущую версию
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.2") { // Замените "3.2" на текущую версию
                     // Если версия на сервере новее
                     updateIcon.style.color = "#ff6b6b"; // Красный цвет
                     updateIcon.title = "Доступно обновление! Нажмите для подробностей.";
@@ -441,9 +441,11 @@ function showUpdateModal(updateIcon) {
             modal.style.padding = "20px";
             modal.style.borderRadius = "10px";
             modal.style.color = "#fff";
-            modal.style.zIndex = "1000";
-            modal.style.width = "400px";
+            modal.style.zIndex = "10000"; // Убедимся, что окно поверх всех элементов
+            modal.style.width = "90%"; // Ширина окна (90% экрана для мобильных устройств)
+            modal.style.maxWidth = "400px"; // Максимальная ширина
             modal.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+            modal.style.overflow = "hidden"; // Чтобы содержимое не выходило за границы
 
             // Заголовок модального окна
             const modalHeader = document.createElement("h3");
@@ -451,9 +453,13 @@ function showUpdateModal(updateIcon) {
                 ? "Доступно обновление!"
                 : "Информация о версии";
             modalHeader.style.marginBottom = "10px";
+            modalHeader.style.fontSize = "18px";
+            modalHeader.style.fontWeight = "bold";
 
-            // Текст с информацией
+            // Основной контент
             const modalContent = document.createElement("div");
+            modalContent.style.marginBottom = "20px";
+
             if (latestVersionMatch && latestVersionMatch[1] !== currentVersion) {
                 // Если есть обновление
                 fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/CHANGELOG.md")
@@ -462,10 +468,9 @@ function showUpdateModal(updateIcon) {
                         modalContent.innerHTML = `
                             <p><strong>Новая версия:</strong> ${latestVersionMatch[1]}</p>
                             <p><strong>Список изменений:</strong></p>
-                            <pre>${changelog}</pre>
-                            <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
-                                Если у Вас возникли проблемы со скриптом, обратитесь к <strong>Ringo</strong>.
-                            </p>
+                            <div style="max-height: 200px; overflow-y: auto; background: #444; padding: 10px; border-radius: 5px;">
+                                <pre style="margin: 0;">${changelog}</pre>
+                            </div>
                         `;
                     })
                     .catch(error => {
@@ -477,13 +482,17 @@ function showUpdateModal(updateIcon) {
                 modalContent.innerHTML = `
                     <p><strong>Текущая версия:</strong> ${currentVersion}</p>
                     <p>У вас самая новая и стабильная версия, обновлений пока нет.</p>
-                    <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
-                        Если у Вас возникли проблемы со скриптом, обратитесь к <strong>Ringo</strong>.
-                    </p>
                 `;
             }
 
-            modalContent.style.marginBottom = "20px";
+            // Отсылка к Ringo
+            const ringoNote = document.createElement("p");
+            ringoNote.innerHTML = `
+                <span style="font-size: 12px; color: #aaa;">
+                    Если у Вас возникли проблемы со скриптом, обратитесь к <strong>Ringo</strong>.
+                </span>
+            `;
+            ringoNote.style.marginTop = "10px";
 
             // Кнопка "Обновиться" (только если есть обновление)
             const updateButton = latestVersionMatch && latestVersionMatch[1] !== currentVersion
@@ -517,11 +526,20 @@ function showUpdateModal(updateIcon) {
                 document.body.removeChild(modal);
             });
 
+            // Контейнер для кнопок
+            const buttonContainer = document.createElement("div");
+            buttonContainer.style.display = "flex";
+            buttonContainer.style.justifyContent = "flex-end";
+            buttonContainer.style.marginTop = "10px";
+
+            if (updateButton) buttonContainer.appendChild(updateButton);
+            buttonContainer.appendChild(closeButton);
+
             // Добавляем элементы в модальное окно
             modal.appendChild(modalHeader);
             modal.appendChild(modalContent);
-            if (updateButton) modal.appendChild(updateButton);
-            modal.appendChild(closeButton);
+            modal.appendChild(ringoNote);
+            modal.appendChild(buttonContainer);
 
             // Добавляем модальное окно на страницу
             document.body.appendChild(modal);
