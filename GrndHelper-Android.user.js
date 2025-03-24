@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Автоответчик жалоб (Android)
 // @namespace    Grnd Helper for Android By Ringo
-// @version      3.3
+// @version      3.4
 // @description  Автоматизация ответов на жалобы и генерации команд (мут, бан, варн и т. д.)
 // @author       Ringo
 // @match        https://grnd.gg/admin/complaints
@@ -409,7 +409,7 @@
             .then(response => response.text())
             .then(scriptContent => {
                 const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-                if (latestVersionMatch && latestVersionMatch[1] !== "3.3") { // Замените "3.2" на текущую версию
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.4") { // Замените "3.2" на текущую версию
                     // Если версия на сервере новее
                     updateIcon.style.color = "#ff6b6b"; // Красный цвет
                     updateIcon.title = "Доступно обновление! Нажмите для подробностей.";
@@ -429,7 +429,7 @@ function showUpdateModal(updateIcon) {
         .then(response => response.text())
         .then(scriptContent => {
             const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-            const currentVersion = "3.3"; // Замените на текущую версию
+            const currentVersion = "3.4"; // Замените на текущую версию
 
             // Находим контейнер генератора наказаний
             const punishmentForm = document.querySelector(".punishment-form");
