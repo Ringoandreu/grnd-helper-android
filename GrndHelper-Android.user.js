@@ -8,11 +8,18 @@
 // @match        https://grnd.gg/admin/complaints/*
 // @updateURL    https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js
 // @downloadURL  https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js
-// @grant        none
+// @grant        GM_addStyle
+// @grant        GM_getResourceURL
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 (function() {
     'use strict';
+
+    // Подключаем Font Awesome
+    GM_addStyle(`
+        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+    `);
 
     console.log("🚀 Grnd Helper for Android запущен!");
 
@@ -402,7 +409,7 @@
             .then(response => response.text())
             .then(scriptContent => {
                 const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-                if (latestVersionMatch && latestVersionMatch[1] !== "3.1") { // Замените "3.1" на текущую версию
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.2") { // Замените "3.2" на текущую версию
                     // Если версия на сервере новее
                     updateIcon.style.color = "#ff6b6b"; // Красный цвет
                     updateIcon.title = "Доступно обновление! Нажмите для подробностей.";
@@ -422,7 +429,7 @@
             .then(response => response.text())
             .then(scriptContent => {
                 const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-                if (latestVersionMatch && latestVersionMatch[1] !== "3.2") { // Замените "3.1" на текущую версию
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.2") { // Замените "3.2" на текущую версию
                     // Если есть обновление
                     fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/CHANGELOG.md")
                         .then(response => response.text())
