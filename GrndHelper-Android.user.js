@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Автоответчик жалоб (Android)
 // @namespace    Grnd Helper for Android By Ringo
-// @version      3.1
+// @version      3.2
 // @description  Автоматизация ответов на жалобы и генерации команд (мут, бан, варн и т. д.)
 // @author       Ringo
 // @match        https://grnd.gg/admin/complaints
@@ -19,59 +19,59 @@
     // Новые шаблоны вердиктов
     const verdictTemplates = [
         {
-    "category": "default",
-    "description": "Неверный формат жалобы",
-    "name": "Жалоба с нарушением правил",
-    "text": "Приветствую, {complaintSender}.\nЖалоба {complaintNumber} не подлежит рассмотрению, так как она составлена с нарушением правил подачи жалоб. Просим вас внимательно ознакомиться с требованиями и отправить корректно оформленную жалобу. Закрыто."
-  },
-  {
-    "category": "default",
-    "description": "Жалоба без информации",
-    "name": "Пустышка",
-    "text": "Приветствую, уважаемый {complaintSender}.\n\nЖалоба {complaintNumber} была рассмотрена и отклонена. Просим Вас составить новую жалобу с подробным описанием ситуации и предоставленными доказательствами (при наличии). Закрыто."
-  },
-  {
-    "category": "default",
-    "description": "Жалоба продублирована",
-    "name": "Дубликат",
-    "text": "Приветствую, уважаемый {complaintSender}.\nВаша жалоба {complaintNumber} была рассмотрена и отклонена, так как является дубликатом предыдущей. Закрыто."
-  },
-  {
-    "category": "default",
-    "description": "Недостаточно доказательств",
-    "name": "Нехватка док-в",
-    "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и отклонена по причине: нехватка доказательств. Закрыто."
-  },
-  {
-    "category": "player",
-    "description": "Последует блокировка аккаутнта",
-    "name": "Одобрено (ban)",
-    "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и одобрена. Игрок {accusedNick} будет наказан блокировкой аккаунта на N дней за \"причина\"."
-  },
-  {
-    "category": "default",
-    "description": "Последует JAIL",
-    "name": "Одобрено (деморган)",
-    "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и одобрена. Игрок {accusedNick} будет наказан деморганом на N минут за \"причина\"."
-  },
-  {
-    "category": "default",
-    "description": "Последует блокировка чата",
-    "name": "Одобрено (mute)",
-    "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и одобрена. Игрок {accusedNick} будет наказан блокировкой чата на N минут за \"причина\"."
-  },
-  {
-    "category": "player",
-    "description": "Последует игровое предупреждение (WARN)",
-    "name": "Одобрено (warn)",
-    "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и одобрена. Игрок {accusedNick} будет наказан варном за \"нарушение\""
-  },
-  {
-    "category": "player",
-    "description": "Игрок не нарушает",
-    "name": "Игрок не нарушает",
-    "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и отклонена. Игрок {accusedNick} не нарушает правила проекта."
-  }
+            "category": "default",
+            "description": "Неверный формат жалобы",
+            "name": "Жалоба с нарушением правил",
+            "text": "Приветствую, {complaintSender}.\nЖалоба {complaintNumber} не подлежит рассмотрению, так как она составлена с нарушением правил подачи жалоб. Просим вас внимательно ознакомиться с требованиями и отправить корректно оформленную жалобу. Закрыто."
+        },
+        {
+            "category": "default",
+            "description": "Жалоба без информации",
+            "name": "Пустышка",
+            "text": "Приветствую, уважаемый {complaintSender}.\n\nЖалоба {complaintNumber} была рассмотрена и отклонена. Просим Вас составить новую жалобу с подробным описанием ситуации и предоставленными доказательствами (при наличии). Закрыто."
+        },
+        {
+            "category": "default",
+            "description": "Жалоба продублирована",
+            "name": "Дубликат",
+            "text": "Приветствую, уважаемый {complaintSender}.\nВаша жалоба {complaintNumber} была рассмотрена и отклонена, так как является дубликатом предыдущей. Закрыто."
+        },
+        {
+            "category": "default",
+            "description": "Недостаточно доказательств",
+            "name": "Нехватка док-в",
+            "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и отклонена по причине: нехватка доказательств. Закрыто."
+        },
+        {
+            "category": "player",
+            "description": "Последует блокировка аккаутнта",
+            "name": "Одобрено (ban)",
+            "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и одобрена. Игрок {accusedNick} будет наказан блокировкой аккаунта на N дней за \"причина\"."
+        },
+        {
+            "category": "default",
+            "description": "Последует JAIL",
+            "name": "Одобрено (деморган)",
+            "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и одобрена. Игрок {accusedNick} будет наказан деморганом на N минут за \"причина\"."
+        },
+        {
+            "category": "default",
+            "description": "Последует блокировка чата",
+            "name": "Одобрено (mute)",
+            "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и одобрена. Игрок {accusedNick} будет наказан блокировкой чата на N минут за \"причина\"."
+        },
+        {
+            "category": "player",
+            "description": "Последует игровое предупреждение (WARN)",
+            "name": "Одобрено (warn)",
+            "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и одобрена. Игрок {accusedNick} будет наказан варном за \"нарушение\""
+        },
+        {
+            "category": "player",
+            "description": "Игрок не нарушает",
+            "name": "Игрок не нарушает",
+            "text": "Приветствую, уважаемый {complaintSender}. Ваша жалоба {complaintNumber} была рассмотрена и отклонена. Игрок {accusedNick} не нарушает правила проекта."
+        }
     ];
 
     function addPunishmentForm() {
@@ -109,9 +109,28 @@
         const headerText = document.createElement("span");
         headerText.innerText = "Выдача наказания";
 
+        // Иконка обновлений (используем Font Awesome)
+        const updateIcon = document.createElement("i");
+        updateIcon.className = "fas fa-bell"; // Иконка колокольчика
+        updateIcon.style.marginLeft = "auto"; // Размещаем в правом углу
+        updateIcon.style.cursor = "pointer";
+        updateIcon.style.color = "#28a745"; // Зелёный цвет по умолчанию
+        updateIcon.style.transition = "color 0.3s ease"; // Плавное изменение цвета
+        updateIcon.title = "Проверить обновления";
+
+        // Добавляем иконку в заголовок
         header.appendChild(headerIcon);
         header.appendChild(headerText);
+        header.appendChild(updateIcon);
         formContainer.appendChild(header);
+
+        // Проверка обновлений
+        checkForUpdates(updateIcon);
+
+        // Обработка нажатия на иконку
+        updateIcon.addEventListener("click", () => {
+            showUpdateModal(updateIcon);
+        });
 
         // Список наказаний
         const punishmentSelect = document.createElement("select");
@@ -376,6 +395,116 @@
 
         formContainer.appendChild(verdictButtonsContainer);
         console.log("✅ Кнопки вердикта успешно добавлены!");
+    }
+
+    function checkForUpdates(updateIcon) {
+        fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js")
+            .then(response => response.text())
+            .then(scriptContent => {
+                const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.1") { // Замените "3.1" на текущую версию
+                    // Если версия на сервере новее
+                    updateIcon.style.color = "#ff6b6b"; // Красный цвет
+                    updateIcon.title = "Доступно обновление! Нажмите для подробностей.";
+                } else {
+                    // Если обновлений нет
+                    updateIcon.style.color = "#28a745"; // Зелёный цвет
+                    updateIcon.title = "У вас самая новая версия.";
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка при проверке обновлений:", error);
+            });
+    }
+
+    function showUpdateModal(updateIcon) {
+        fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js")
+            .then(response => response.text())
+            .then(scriptContent => {
+                const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.1") { // Замените "3.1" на текущую версию
+                    // Если есть обновление
+                    fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/CHANGELOG.md")
+                        .then(response => response.text())
+                        .then(changelog => {
+                            // Создаём модальное окно
+                            const modal = document.createElement("div");
+                            modal.style.position = "fixed";
+                            modal.style.top = "50%";
+                            modal.style.left = "50%";
+                            modal.style.transform = "translate(-50%, -50%)";
+                            modal.style.background = "#333";
+                            modal.style.padding = "20px";
+                            modal.style.borderRadius = "10px";
+                            modal.style.color = "#fff";
+                            modal.style.zIndex = "1000";
+                            modal.style.width = "400px";
+                            modal.style.boxShadow = "0 4px 6px rgba(0, 0, 0, 0.1)";
+
+                            // Заголовок модального окна
+                            const modalHeader = document.createElement("h3");
+                            modalHeader.innerText = "Доступно обновление!";
+                            modalHeader.style.marginBottom = "10px";
+
+                            // Текст с changelog
+                            const modalContent = document.createElement("div");
+                            modalContent.innerHTML = `
+                                <p><strong>Новая версия:</strong> ${latestVersionMatch[1]}</p>
+                                <p><strong>Список изменений:</strong></p>
+                                <pre>${changelog}</pre>
+                                <p style="font-size: 12px; color: #aaa; margin-top: 10px;">
+                                    Если у Вас возникли проблемы со скриптом, обратитесь к <strong>Ringo</strong>.
+                                </p>
+                            `;
+                            modalContent.style.marginBottom = "20px";
+
+                            // Кнопка "Обновиться"
+                            const updateButton = document.createElement("button");
+                            updateButton.innerText = "Обновиться";
+                            updateButton.style.background = "#28a745";
+                            updateButton.style.color = "#fff";
+                            updateButton.style.border = "none";
+                            updateButton.style.padding = "8px 16px";
+                            updateButton.style.borderRadius = "5px";
+                            updateButton.style.cursor = "pointer";
+                            updateButton.style.marginRight = "10px";
+                            updateButton.addEventListener("click", () => {
+                                window.location.href = "https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js";
+                            });
+
+                            // Кнопка "Закрыть"
+                            const closeButton = document.createElement("button");
+                            closeButton.innerText = "Закрыть";
+                            closeButton.style.background = "#dc3545";
+                            closeButton.style.color = "#fff";
+                            closeButton.style.border = "none";
+                            closeButton.style.padding = "8px 16px";
+                            closeButton.style.borderRadius = "5px";
+                            closeButton.style.cursor = "pointer";
+                            closeButton.addEventListener("click", () => {
+                                document.body.removeChild(modal);
+                            });
+
+                            // Добавляем элементы в модальное окно
+                            modal.appendChild(modalHeader);
+                            modal.appendChild(modalContent);
+                            modal.appendChild(updateButton);
+                            modal.appendChild(closeButton);
+
+                            // Добавляем модальное окно на страницу
+                            document.body.appendChild(modal);
+                        })
+                        .catch(error => {
+                            console.error("Ошибка при загрузке списка изменений:", error);
+                        });
+                } else {
+                    // Если обновлений нет
+                    alert("У вас самая новая и стабильная версия, обновлений пока нет.");
+                }
+            })
+            .catch(error => {
+                console.error("Ошибка при проверке обновлений:", error);
+            });
     }
 
     setTimeout(() => {
