@@ -431,6 +431,12 @@ function showUpdateModal(updateIcon) {
             const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
             const currentVersion = "3.1"; // Замените на текущую версию
 
+            // Если версия на сервере совпадает с текущей, выходим
+            if (latestVersionMatch && latestVersionMatch[1] === currentVersion) {
+                alert("У вас самая новая и стабильная версия, обновлений пока нет.");
+                return;
+            }
+
             // Создаём модальное окно
             const modal = document.createElement("div");
             modal.style.position = "fixed";
@@ -452,7 +458,7 @@ function showUpdateModal(updateIcon) {
             modalHeader.innerText = latestVersionMatch && latestVersionMatch[1] !== currentVersion
                 ? "Доступно обновление!"
                 : "Информация о версии";
-            modalHeader.style.marginBottom = "10px";
+            modalHeader.style.marginBottom = "20px"; // Увеличили отступ
             modalHeader.style.fontSize = "18px";
             modalHeader.style.fontWeight = "bold";
 
@@ -465,13 +471,45 @@ function showUpdateModal(updateIcon) {
                 fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/CHANGELOG.md")
                     .then(response => response.text())
                     .then(changelog => {
+                        // Парсим changelog, чтобы отобразить только последние изменения
+                        const changelogLines = changelog.split("\n");
+                        const latestChanges = [];
+                        let isLatestVersion = false;
+
+                        for (const line of changelogLines) {
+                            if (line.startsWith("## Версия ")) {
+                                if (isLatestVersion) break; // Останавливаемся после текущей версии
+                                if (line.includes(latestVersionMatch[1])) {
+                                    isLatestVersion = true;
+                                }
+                            }
+                            if (isLatestVersion) {
+                                latestChanges.push(line);
+                            }
+                        }
+
                         modalContent.innerHTML = `
                             <p><strong>Новая версия:</strong> ${latestVersionMatch[1]}</p>
-                            <p><strong>Список изменений:</strong></p>
+                            <p style="margin-top: 10px;"><strong>Список изменений:</strong></p>
                             <div style="max-height: 200px; overflow-y: auto; background: #444; padding: 10px; border-radius: 5px;">
-                                <pre style="margin: 0;">${changelog}</pre>
+                                <pre style="margin: 0;">${latestChanges.join("\n")}</pre>
                             </div>
+                            <p style="margin-top: 10px; font-size: 12px; color: #aaa;">
+                                <a href="#" id="showFullChangelog" style="color: #28a745; text-decoration: none;">Показать полную историю изменений</a>
+                            </p>
                         `;
+
+                        // Обработка клика по ссылке "Показать полную историю изменений"
+                        const showFullChangelogLink = modal.querySelector("#showFullChangelog");
+                        showFullChangelogLink.addEventListener("click", (e) => {
+                            e.preventDefault();
+                            modalContent.innerHTML = `
+                                <p><strong>Полная история изменений:</strong></p>
+                                <div style="max-height: 200px; overflow-y: auto; background: #444; padding: 10px; border-radius: 5px;">
+                                    <pre style="margin: 0;">${changelog}</pre>
+                                </div>
+                            `;
+                        });
                     })
                     .catch(error => {
                         console.error("Ошибка при загрузке списка изменений:", error);
