@@ -431,12 +431,22 @@ function showUpdateModal(updateIcon) {
             const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
             const currentVersion = "3.3"; // Замените на текущую версию
 
+            // Находим контейнер генератора наказаний
+            const punishmentForm = document.querySelector(".punishment-form");
+            if (!punishmentForm) {
+                alert("Генератор наказаний не найден на странице.");
+                return;
+            }
+
+            // Получаем координаты генератора наказаний
+            const rect = punishmentForm.getBoundingClientRect();
+
             // Создаём модальное окно
             const modal = document.createElement("div");
-            modal.style.position = "fixed"; // Фиксированное позиционирование относительно viewport
-            modal.style.top = "50%"; // Центрируем по вертикали
-            modal.style.left = "50%"; // Центрируем по горизонтали
-            modal.style.transform = "translate(-50%, -50%)"; // Точное центрирование
+            modal.style.position = "fixed"; // Фиксированное позиционирование
+            modal.style.top = `${rect.top + window.scrollY}px`; // Позиционируем окно относительно генератора
+            modal.style.left = `${rect.left + window.scrollX}px`; // Позиционируем окно относительно генератора
+            modal.style.transform = "translateY(20px)"; // Сдвигаем окно немного вниз
             modal.style.background = "#333";
             modal.style.padding = "20px";
             modal.style.borderRadius = "10px";
