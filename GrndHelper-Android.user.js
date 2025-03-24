@@ -439,10 +439,10 @@ function showUpdateModal(updateIcon) {
 
             // Создаём модальное окно
             const modal = document.createElement("div");
-            modal.style.position = "fixed";
-            modal.style.top = "50%";
+            modal.style.position = "absolute"; // Изменено на абсолютное позиционирование
+            modal.style.top = `${window.scrollY + 50}px`; // Позиционируем окно относительно текущей прокрутки
             modal.style.left = "50%";
-            modal.style.transform = "translate(-50%, -50%)";
+            modal.style.transform = "translateX(-50%)"; // Центрируем по горизонтали
             modal.style.background = "#333";
             modal.style.padding = "20px";
             modal.style.borderRadius = "10px";
@@ -458,7 +458,7 @@ function showUpdateModal(updateIcon) {
             modalHeader.innerText = latestVersionMatch && latestVersionMatch[1] !== currentVersion
                 ? "Доступно обновление!"
                 : "Информация о версии";
-            modalHeader.style.marginBottom = "20px"; // Увеличили отступ
+            modalHeader.style.marginBottom = "20px";
             modalHeader.style.fontSize = "18px";
             modalHeader.style.fontWeight = "bold";
 
@@ -581,6 +581,11 @@ function showUpdateModal(updateIcon) {
 
             // Добавляем модальное окно на страницу
             document.body.appendChild(modal);
+
+            // Обновляем позицию окна при прокрутке
+            window.addEventListener("scroll", () => {
+                modal.style.top = `${window.scrollY + 50}px`;
+            });
         })
         .catch(error => {
             console.error("Ошибка при проверке обновлений:", error);
