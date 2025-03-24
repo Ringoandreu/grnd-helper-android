@@ -431,15 +431,9 @@ function showUpdateModal(updateIcon) {
             const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
             const currentVersion = "3.3"; // Замените на текущую версию
 
-            // Если версия на сервере совпадает с текущей, выходим
-            if (latestVersionMatch && latestVersionMatch[1] === currentVersion) {
-                alert("У вас самая новая и стабильная версия, обновлений пока нет.");
-                return;
-            }
-
             // Создаём модальное окно
             const modal = document.createElement("div");
-            modal.style.position = "absolute"; // Изменено на абсолютное позиционирование
+            modal.style.position = "absolute"; // Плавающее окно
             modal.style.top = `${window.scrollY + 50}px`; // Позиционируем окно относительно текущей прокрутки
             modal.style.left = "50%";
             modal.style.transform = "translateX(-50%)"; // Центрируем по горизонтали
