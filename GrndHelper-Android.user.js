@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Автоответчик жалоб (Android)
 // @namespace    Grnd Helper for Android By Ringo
-// @version      3.4
+// @version      3.3
 // @description  Автоматизация ответов на жалобы и генерации команд (мут, бан, варн и т. д.)
 // @author       Ringo
 // @match        https://grnd.gg/admin/complaints
@@ -409,7 +409,7 @@
             .then(response => response.text())
             .then(scriptContent => {
                 const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-                if (latestVersionMatch && latestVersionMatch[1] !== "3.4") { // Замените "3.2" на текущую версию
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.3") { // Замените "3.2" на текущую версию
                     // Если версия на сервере новее
                     updateIcon.style.color = "#ff6b6b"; // Красный цвет
                     updateIcon.title = "Доступно обновление! Нажмите для подробностей.";
@@ -431,22 +431,22 @@ function showUpdateModal(updateIcon) {
             const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
             const currentVersion = "3.3"; // Замените на текущую версию
 
-            // Создаем overlay (полупрозрачный фон)
-            const overlay = document.createElement("div");
-            overlay.style.position = "fixed";
-            overlay.style.top = "0";
-            overlay.style.left = "0";
-            overlay.style.width = "100%";
-            overlay.style.height = "100%";
-            overlay.style.background = "rgba(0, 0, 0, 0.5)"; // Полупрозрачный черный фон
-            overlay.style.zIndex = "9999"; // Ниже модального окна
+            // Находим контейнер генератора наказаний
+            const punishmentForm = document.querySelector(".punishment-form");
+            if (!punishmentForm) {
+                alert("Генератор наказаний не найден на странице.");
+                return;
+            }
+
+            // Получаем координаты генератора наказаний
+            const rect = punishmentForm.getBoundingClientRect();
 
             // Создаём модальное окно
             const modal = document.createElement("div");
-            modal.style.position = "fixed";
-            modal.style.top = "50%"; // Центрируем по вертикали
-            modal.style.left = "50%"; // Центрируем по горизонтали
-            modal.style.transform = "translate(-50%, -50%)"; // Точное центрирование
+            modal.style.position = "fixed"; // Фиксированное позиционирование
+            modal.style.top = `${rect.top + window.scrollY}px`; // Позиционируем окно относительно генератора
+            modal.style.left = `${rect.left + window.scrollX}px`; // Позиционируем окно относительно генератора
+            modal.style.transform = "translateY(20px)"; // Сдвигаем окно немного вниз
             modal.style.background = "#333";
             modal.style.padding = "20px";
             modal.style.borderRadius = "10px";
@@ -550,8 +550,6 @@ function showUpdateModal(updateIcon) {
                     button.style.marginRight = "10px";
                     button.addEventListener("click", () => {
                         window.location.href = "https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/GrndHelper-Android.user.js";
-                        document.body.removeChild(overlay); // Удаляем overlay
-                        document.body.removeChild(modal); // Удаляем модальное окно
                     });
                     return button;
                 })()
@@ -567,8 +565,7 @@ function showUpdateModal(updateIcon) {
             closeButton.style.borderRadius = "5px";
             closeButton.style.cursor = "pointer";
             closeButton.addEventListener("click", () => {
-                document.body.removeChild(overlay); // Удаляем overlay
-                document.body.removeChild(modal); // Удаляем модальное окно
+                document.body.removeChild(modal);
             });
 
             // Контейнер для кнопок
@@ -586,8 +583,7 @@ function showUpdateModal(updateIcon) {
             modal.appendChild(ringoNote);
             modal.appendChild(buttonContainer);
 
-            // Добавляем overlay и модальное окно на страницу
-            document.body.appendChild(overlay);
+            // Добавляем модальное окно на страницу
             document.body.appendChild(modal);
         })
         .catch(error => {
