@@ -422,7 +422,7 @@
             .then(response => response.text())
             .then(scriptContent => {
                 const latestVersionMatch = scriptContent.match(/@version\s+([\d.]+)/);
-                if (latestVersionMatch && latestVersionMatch[1] !== "3.1") { // Замените "3.1" на текущую версию
+                if (latestVersionMatch && latestVersionMatch[1] !== "3.2") { // Замените "3.1" на текущую версию
                     // Если есть обновление
                     fetch("https://raw.githubusercontent.com/Ringoandreu/grnd-helper-android/main/CHANGELOG.md")
                         .then(response => response.text())
